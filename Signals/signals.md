@@ -38,3 +38,6 @@ struct sigaction {
 };
 ```
 
+SIGKILL and SIGSTOP cannot be handled using sigaction. Sending signals DOES require OS to do work. 
+
+For sending signals, it usually uses the Kill system call which is provided by the OS. 
