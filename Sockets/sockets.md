@@ -51,3 +51,34 @@ All set.
 
 This creates a new connected socket to communicate with the client. 
 
+Client set up framework:
+
+1. Create socket
+2. Fill server address
+3. Get server IP from hostname
+4. Connect 
+5. Read/write 
+
+```
+// Step 1: Create socket
+int soc = socket(AF_INET, SOCK_STREAM, 0);
+
+// Step 2: Fill server address
+struct sockaddr_in server;
+server.sin_family = AF_INET;
+server.sin_port = htons(PORT);     // htons() REQUIRED
+memset(&server.sin_zero, 0, 8);
+
+// Step 3: Get server IP from hostname
+struct addrinfo *ai;
+getaddrinfo("teach.cs.toronto.edu", NULL, NULL, &ai);
+server.sin_addr = ((struct sockaddr_in *)ai->ai_addr)->sin_addr;
+
+// Step 4: Connect
+connect(soc, (struct sockaddr *)&server, sizeof(server));
+
+// Step 5: Read/write
+write(soc, "hello\r\n", 7);
+read(soc, buf, sizeof(buf));
+```
+
