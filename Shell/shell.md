@@ -75,6 +75,13 @@ $1 $2 $3
 
 ```
 
+echo - print text 
+read - get input
+test - conditions
+expr - arithmetic
+diff - compare files
+grep - search text
+cp - copy files 
 
 
 
