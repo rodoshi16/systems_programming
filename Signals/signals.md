@@ -2,6 +2,17 @@
 
 Signals are notifications that are sent to a process and they can either be handled, blocked or ignored. 
 
+ps aux: 
+
+- ps: process status
+- aux: show process from all users, show detailed info and include processes not attached to a terminal
+
+Overall: it prints a snapshot of everything currently running on your system. 
+
+
+> kill -STOP 3819
+> kill -CONT 3819
+
 Ex:
 
 - SIGINT: when you press ctrl+C in the terminal, it kills the process in the terminal
@@ -41,3 +52,10 @@ struct sigaction {
 SIGKILL and SIGSTOP cannot be handled using sigaction. Sending signals DOES require OS to do work. 
 
 For sending signals, it usually uses the Kill system call which is provided by the OS. 
+
+**Information about signals and processes**
+
+1. Any process (with permission) can send a signal to any other process using its PID. 
+2. A signal can be sent by OS or a user process. 
+3. The kill program is used to terminate a process and send a signal to a process. 
+4. Signals can arrive at any time, you cannot always control them 
