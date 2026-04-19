@@ -27,9 +27,24 @@ Ex:
 
 ***What happens when a signal is sent?***
 
-Sigaction is a system call which lets you define custom behaviour for when certain signals are received.
+Sigaction is a system call which lets you define custom behaviour for when certain signals are received. It will modify the Process Control Table. 
 
-Hander fuction will dictate what to do:
+
+int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact); 
+
+- signum: the number of the signal being modified 
+- *act: pointer to a struct we need to initialize before we call sigaction
+- oldact: pointer to a struct 
+
+```
+sigaction(SIGINT, &sa, NULL)
+```
+
+- when SIGINT happens, check PCB for custom handler and run that. 
+
+
+
+Handler function will dictate what to do:
 
 ```
 void handler(int sig) {
@@ -59,3 +74,4 @@ For sending signals, it usually uses the Kill system call which is provided by t
 2. A signal can be sent by OS or a user process. 
 3. The kill program is used to terminate a process and send a signal to a process. 
 4. Signals can arrive at any time, you cannot always control them 
+
