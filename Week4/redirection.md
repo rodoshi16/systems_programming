@@ -18,3 +18,7 @@ The file you get after compiling the previous code is a.out. We are redirecting 
 Output redirection -> output will go to a file 
 
 >>> ./a.out > output.txt
+
+IF i have a file called sort and i want the input to come from names and the output to be redirected to students, I can do:
+
+>>> $sort < names.cat > students.txt
