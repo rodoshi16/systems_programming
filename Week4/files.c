@@ -14,5 +14,12 @@ int main(){
     }
 
     printf("File opened: we can use it there\n"); 
+
+    //int fclose(FILE *stream) - just pass the file pointer
+
+    if (fclose(f) != 0){
+        fprintf(stderr, "fclose failed\n"); 
+        return 1; 
+    }
     return 0; 
 }
