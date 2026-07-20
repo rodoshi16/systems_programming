@@ -19,3 +19,7 @@ int main(){
     printf("Access i via *pt and we get %d\n", *pt); 
     return 0; 
 }
+
+//to have the memory to be accessible after the function has returned
+
+void *malloc(size_t size); 
