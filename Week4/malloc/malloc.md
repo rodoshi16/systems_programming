@@ -10,3 +10,17 @@ void *malloc(size_t size)
 The memory on malloc remains accessible until the programmer frees it. 
 
 Returns a void pointer 
+
+
+```
+
+int main (){
+    float *rainfall = NULL: 
+    //allocate space for a single floating point number and assign its location to the pointer rainfall
+    rainfall = malloc(sizeof(float)); r
+    *rainfall = 42.6; 
+    return 0; 
+
+}
+
+```
