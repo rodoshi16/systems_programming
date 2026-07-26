@@ -22,8 +22,6 @@ int main(){
     printf("Size of string: %lu\n", sizeof(weekday)); 
 
     // you cant add two strings with + since we store char arrays and tht will juts add pointers
-    printf("Size of string: %lu\n", strlen(weekday)); 
-
-    
+    printf("Size of string: %lu\n", strlen(weekday));
 
 }
