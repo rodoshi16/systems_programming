@@ -21,9 +21,14 @@ int main(){
     // printf("%s\n", s1); 
     // printf("%s\n", s2); 
 
-    strcat(s1, s2); 
+
+    //strcat -> s1 must be valid, s1 needs to have enough space
+    // it is unsafe
+    // strcat(s1, s2); 
+    strncat(s1, s2, sizeof(s1) - strlen(s1) -1); 
     printf("%s\n", s1); 
     printf("%s\n", s2); 
+
 
     
 
