@@ -42,6 +42,15 @@ int main(){
         printf("Character found at index %ld\n", p - c1); 
     }
 
+    //note that /0 marks the end of the string - this will output University NOT University\0of C Programming
+    char s1[30] = "University of C Programming";
+    char *p;
+    p = strchr(s1, ' ');
+    if (p != NULL) {
+        *p = '\0';
+    }
+    printf("%s\n", s1);
+    return 0;
 
 
 
