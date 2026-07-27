@@ -21,14 +21,18 @@ void random_init(int *arr, int size){
     }
 }
 
-double time_sort(int size){
+double time_sort(int size, void(*sort_func)(int *, int)){
     int arr[size]; 
     random_init(arr, size); 
 
 
     clock_t begin = clock(); 
-    bubble_sort(arr, size); 
     clock_t end = clock(); 
+    //if we want to change the sorting algo - we need to change the code here which isnt standard
+    // bubble_sort(arr, size);
+
+    //instead we use the func pointer passed in as the parameter
+    sort_func(arr, size); 
 
     check_sort(arr, size); 
 
@@ -40,13 +44,11 @@ int main(){
     srand(time(NULL)); 
 
     for (int size = 1; size < 4096; size *=2){
-        double time_spent = time_sort(size); 
+        //calling the func as the parameter
+        double time_spent = time_sort(size, bubble_sort); 
 
     }
 
     return 0; 
-
-
-
 
 }
