@@ -4,41 +4,59 @@
 #include <sys/wait.h>
 #include <signal.h>
 
-int main(){
-    int result; 
-    int i, j; 
+int main() {
+    int result;
+    int i, j;
 
-    for(i=0; i < 5; i++){
-        result = fork(); 
+    printf("[%d] Original process (my parent is %d)\n",
+            getpid(), getppid());
 
-        if (result == -1){
-            perror("fork:"); 
-            exit(1); 
-        } else if(result == 0){
-            for (j = 0; j < 5; j++){
-                printf("[%d] Child %d %d\n", getpid(), i, j); 
-                usleep(100); 
+    for (i = 0; i < 5; i++) {
+        result = fork();
+
+        if (result == -1) {
+            perror("fork:");
+            exit(1);
+        } else if (result == 0) { 
+            //os scheduler decides how it will create and run processes 
+            // each process resumes from where it was left of
+            for(j = 0; j < 5; j++) {
+                printf("[%d] Child %d %d\n", getpid(), i, j);
+                usleep(100);
             }
 
-            exit(0); 
+            if(i == 2) {
+                abort();
+            }
+            exit(i);
         }
-
-
     }
-    for (i = 0; i < 5; i++){
-        //pid_t : type to store process ID
+	sleep(10);
+    for (i = 0; i < 5; i++) {
         pid_t pid;
-        int status; 
-
-
-        if ((pid == wait(&status)) == -1){
-            perror("wait"); 
-        } else{
-            printf("Child %d terminated with %d\n", pid, status); 
+        //declaring it reserves space in memory
+        int status;
+        //status returns the pid of the finished child
+        // call to wait writes to status
+        if( (pid = wait(&status)) == -1) {
+            perror("wait");
+        } else {
+            //WIFEXITED: checks if the child terminated normally  (t/f)
+            if (WIFEXITED(status)) {
+                printf("Child %d terminated with %d\n",
+                    //return the code the child returned 
+                    // WEXITSTATUS: 0 is sucess and non zero is failure
+                    pid, WEXITSTATUS(status));
+            //signal termination: it was interuppted or killed
+            } else if(WIFSIGNALED(status)){
+                printf("Child %d terminated with signal %d\n",
+                    pid, WTERMSIG(status));
+            } else {
+                printf("Shouldn't get here\n");
+            }
         }
     }
-
-    printf("[%d] Parent about to terminate\n", getpid()); 
-
+    printf("[%d] Parent about to terminate\n", getpid());
+    return 0;
 
 }
