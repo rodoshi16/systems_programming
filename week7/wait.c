@@ -26,8 +26,10 @@ int main(){
 
     }
     for (i = 0; i < 5; i++){
+        //pid_t : type to store process ID
         pid_t pid;
         int status; 
+
 
         if ((pid == wait(&status)) == -1){
             perror("wait"); 
