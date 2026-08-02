@@ -12,7 +12,6 @@ int main(){
     perror("./execl"); 
     return 1; 
 
-    // l stands for list
-    // v : vector
+    // execl, execv, execlp, execle, execve
 
 }
