@@ -9,6 +9,9 @@ int main(){
 
     int r = fork(); 
 
+    //pipes are unidirection: in this case parent writing to child
+    // once you decide, need to close the ends you wont use
+
     if (r > 0){
         //closing read end: parent will only write
         close(fd[0]); 
