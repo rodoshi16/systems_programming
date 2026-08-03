@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 int main(){
     //returns a file pointer
     FILE *outfp = fopen("tmpfile", "w"); 
@@ -16,7 +17,7 @@ int main(){
     fprintf(outfp, "This is "); 
     fprintf(outfp, "One of several "); 
     fprintf(outfp, "calls to fprintf.\n"); 
-    fprint(outfp, "how many write"); 
+    fprintf(outfp, "how many write"); 
     fprintf(outfp, "system calls are generated?\n");
     fclose(outfp);
     return 0;
