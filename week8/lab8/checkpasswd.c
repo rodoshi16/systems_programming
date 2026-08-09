@@ -33,6 +33,51 @@ int main(void) {
   }
   
   // TODO
-  // for a child process - call validate and return that to the child
-  // if 0 - Password verified, if 2 invalid password, if 3, no such user
-}
+  
+  // parent writes userid, passwd to child 
+
+  int fd[2]; 
+  pipe(fd); 
+  res = fork(); 
+
+  if (res == 0){
+    close(fd[1]); 
+    dup2(fd[0], stdin);
+
+    execl("./rodoshi", "rodoshi", NULL); 
+    perror("execl"); 
+    exit(1); 
+  }
+  
+  else if (res > 0){
+    close(fd[0]); 
+
+    write(fd[1], user_id, MAXLINE); 
+    write(fd[1], password, MAXLINE); 
+    close(fd[1]); 
+
+
+    int status;
+    wait(&status); 
+
+    if (!WIFEXITED(status)){
+      exit(1); 
+    }
+    
+    int code = WEXITSTATUS(status); 
+    if (code == 0){
+      printf(SUCCESS); 
+    } else if(code == 2){
+      printf(INVALID); 
+    } else if (code == 3) {
+        printf(NO_USER);
+    } else {
+        exit(1);
+    }
+    
+
+  } else {
+    perror("fork"); 
+    exit(1); 
+  }
+} 

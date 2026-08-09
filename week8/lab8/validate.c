@@ -45,6 +45,7 @@ int main(void){
     char userid[MAXLINE];
     char password[MAXLINE];
 
+    //store userid in userid
     if((n = read(STDIN_FILENO, userid, MAX_PASSWORD)) == -1) {
         perror("read");
         exit(1);
