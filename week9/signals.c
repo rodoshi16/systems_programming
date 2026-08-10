@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <signal.h>
+#include <unistd.h>
 
 void handler(int code) {
     fprintf(stderr, "signal %d caught\n", code); 
@@ -41,6 +42,7 @@ int main(){
     for (;;){
         if ((i++ % 5000000) == 0){
             fprintf(stderr, "."); 
+            usleep(50000); 
         }
     }
     return 0; 
