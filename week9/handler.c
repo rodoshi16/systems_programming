@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 /*
 
@@ -20,29 +23,28 @@ X already increments and then when we get back just print outside 10
 
 */
 
-int main(){
-    int x = 5;
 
-    void handler(int sig) {
-        x += 3;
-        fprintf(stderr, "inside %d ", x);
-    }
+int x = 5;
 
-    int main() {
-        fprintf(stderr, "start ");
-        //                             POSITION A
-        struct sigaction act;
-        act.sa_handler = handler;
-        act.sa_flags = 0;
-        sigemptyset(&act.sa_mask);
-        sigaction(SIGINT,&act,NULL);
+void handler(int sig) {
+    x += 3;
+    fprintf(stderr, "inside %d ", x);
+}
 
-        //                             POSITION B
-        x += 2;
+int main() {
+    fprintf(stderr, "start ");
+    //                             POSITION A
+    struct sigaction act;
+    act.sa_handler = handler;
+    act.sa_flags = 0;
+    sigemptyset(&act.sa_mask);
+    sigaction(SIGINT,&act,NULL);
 
-        //                             POSITION C
-        fprintf(stderr, "outside %d", x);
+    //                             POSITION B
+    x += 2;
 
-        return 0;
-    }
+    //                             POSITION C
+    fprintf(stderr, "outside %d", x);
+
+    return 0;
 }
