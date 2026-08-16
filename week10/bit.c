@@ -13,7 +13,5 @@ int main(){
     printf("result of negating %x is %x hex\n", a, ~a); 
     printf("result of negating %x is %x hex\n", b, ~b); 
     printf("result of negating %x is %x hex\n", c, ~c); 
-    
-
     return 0; 
 }
