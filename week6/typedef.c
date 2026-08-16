@@ -16,6 +16,7 @@ typedef struct {
 } Student; 
 
 
+
 int main(){
     age_t my_age = 5; 
     print_boot_size(my_age); 
