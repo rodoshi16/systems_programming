@@ -17,7 +17,7 @@ Returns a void pointer
 int main (){
     float *rainfall = NULL: 
     //allocate space for a single floating point number and assign its location to the pointer rainfall
-    rainfall = malloc(sizeof(float)); r
+    rainfall = malloc(sizeof(float)); 
     *rainfall = 42.6; 
     return 0; 
 
