@@ -13,7 +13,6 @@ int main(){
     //c already deferences the pointer
     node_a -> next = node_b; 
 
-    //printing an address
     printf("node_a: %p\n", node_a); 
     printf("node_b: %p\n", node_b); 
 
