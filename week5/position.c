@@ -16,20 +16,17 @@ Node* create_node(int n, Node *next){
 
 void insert(int position, int num, Node *front){
     Node *new_node = malloc(sizeof(Node)); 
+    new_node -> val = num; 
     int i = 0; 
     while (front != NULL){
         if (i == position-1){
             Node *temp = front -> next; 
             front -> next = new_node; 
-            new_node -> next = front; 
-            return 0; 
+            new_node -> next = temp; 
         }
-        else{
-            i += 1; 
-        }
+        front = front -> next;
+        i += 1; 
     }
-
-    printf("Position is greater than length"); 
 
 }
 
@@ -40,6 +37,7 @@ int main(){
     Node * a = create_node(1, b); 
 
     Node *curr = a; 
+    insert(1, 7, a); 
     while (curr != NULL){
         printf("The value of Node: %d\n",curr->val); 
         curr = curr -> next; 
