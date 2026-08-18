@@ -14,10 +14,19 @@ Node* create_node(int n, Node *next){
     return new_node; 
 }
 
-void insert(int position, int num, Node *front){
+Node * insert(int position, int num, Node *front){
+    Node * head = front; 
+    if (position < 0){
+        exit(1); 
+    }
     Node *new_node = malloc(sizeof(Node)); 
     new_node -> val = num; 
     int i = 0; 
+    if (position == 0){
+        new_node -> next = front; 
+        return new_node; 
+    }
+
     while (front != NULL){
         if (i == position-1){
             Node *temp = front -> next; 
@@ -27,6 +36,7 @@ void insert(int position, int num, Node *front){
         front = front -> next;
         i += 1; 
     }
+    return head; 
 
 }
 
@@ -36,8 +46,7 @@ int main(){
     Node * b = create_node(2, c); 
     Node * a = create_node(1, b); 
 
-    Node *curr = a; 
-    insert(1, 7, a); 
+    Node *curr = insert(1, 7, a); 
     while (curr != NULL){
         printf("The value of Node: %d\n",curr->val); 
         curr = curr -> next; 
