@@ -115,7 +115,14 @@ int main(){
     client_addr.sin_family = AF_INET; 
 
 
+   //accept is a blocking system call - if there are no incoming requests, it will stay blocked and not return anything
    int return_value = accept(listen_soc, (struct sockaddr*)&client_addr, &client_len); 
    return 0; 
+
+   struct sockaddr_in addr; 
+   addr.sin_family = AF_INET; 
+   memset(&addr.sin_zero, 0, 8); 
+   addr.sin_port = htons(54321); 
+   
 
 }
