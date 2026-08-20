@@ -18,6 +18,8 @@ int main(){
     memset(&client.sin_zero, 0, 8); 
     client.sin_port = htons(54321); 
 
+    struct addrinfo *ai; 
+    char *hostname = "teach.cs.toronto.edu"; 
 
     int con = connect(soc, (struct sockaddr *)&client, sizeof(struct sockaddr_in)); 
     return 0; 
