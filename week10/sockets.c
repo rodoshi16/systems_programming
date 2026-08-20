@@ -86,11 +86,36 @@ int main(){
     }
 
     //all clear - socket is waiting for incoming connections from another socket (client socket)
-    //backlog - max number of incoming requests in the queue
-    // when queue is full, it will make the 6th socket wait
+    //backlog - max number of incoming requests in the queue [wait on hold]
+    // when queue is full, it will make the 6th socket wait [saying the queue ]
+    // returns 0 on success: os has put the socket in listening mode
+    // -1 on failure
 
-    if (listen(listen_soc, 5))
+    /*
+
+    listen(socket, int backlog)
+    
+    */
+
+    if (listen(listen_soc, 5) < 0){
+        perror("listen"); 
+        exit(1); 
+    }
+
+    /*
+
+    accept takes the first waiting request and removes it from the queue
+    and return a new connected socket
+    - it needs to know how to big the pointer to the client address is 
+
+    */
+    
+    struct sockaddr_in client_addr; 
+    unsigned int client_len = sizeof(struct sockaddr_in); 
+    client_addr.sin_family = AF_INET; 
 
 
+   int return_value = accept(listen_soc, (struct sockaddr*)&client_addr, &client_len); 
+   return 0; 
 
 }
