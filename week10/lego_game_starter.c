@@ -25,10 +25,21 @@ int accept_player(int listen_soc, char *name) {
         return -1;
     }
 
-    char msg[MAX_BUF];
-    sprintf(msg, "Hello player %s! Please wait for your turn to begin.\r\n", name);
-    //telling os to look up resource with ID 4 and write the bytes there
-    write(client_socket, msg, strlen(msg));
+    if (strcmp(name, "one") ==0){
+        char msg[MAX_BUF];
+        sprintf(msg, "Hello player %s! Please wait for player 2 to begin.\r\n", name);
+        //telling os to look up resource with ID 4 and write the bytes there
+        write(client_socket, msg, strlen(msg));
+
+    }
+    
+    else {
+        char msg[MAX_BUF];
+        sprintf(msg, "Hello player %s! Please wait for your turn to begin.\r\n", name);
+        //telling os to look up resource with ID 4 and write the bytes there
+        write(client_socket, msg, strlen(msg));
+
+    }
 
     return client_socket;
 }
@@ -37,7 +48,12 @@ int accept_player(int listen_soc, char *name) {
  * Write msg to players with socket descriptors player1 and player2
  */
 void write_to_players(char *msg, int player1, int player2) {
-    // TODO
+    write(player1, msg, strlen(msg));
+    write(player2, msg, strlen(msg));
+
+
+
+    
 }
 
 /* Read and return a valid move from socket.
@@ -94,7 +110,12 @@ int main() {
         exit(1);
     }
 
-    int client_socket = accept_player(listen_soc, "one"); // TODO: accept two players and store their socket descriptors in an array
+    int p1 = accept_player(listen_soc, "one"); 
+    int p2 = accept_player(listen_soc, "two");
+
+    char buf[MAX_BUF] = "Basic rules of the game\r\n"; 
+    write_to_players(buf, p1, p2); 
+    
 
     int num_pieces = LEGO_PIECES;
     int round = 0;
@@ -104,11 +125,11 @@ int main() {
         // TODO: Announce the current status to all players (hint: use write_to_players)
 
         // Prompt a player to move by writing a message to them
-        int curr_player = client_socket; // TODO: set curr_player to the socket descriptor of the current player (hint: round % 2 will alternate between 0 and 1)
+        int curr_player = p1; // TODO: set curr_player to the socket descriptor of the current player (hint: round % 2 will alternate between 0 and 1)
         sprintf(msg, "Please enter a move between 1-3.\r\n");
         write(curr_player, msg, strlen(msg));
 
-        int move = client_socket; // TODO: Read a move from curr_player using read_a_move
+        int move = p1; // TODO: Read a move from curr_player using read_a_move
         num_pieces -= move;
         round += 1;
 

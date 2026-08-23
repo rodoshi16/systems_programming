@@ -37,4 +37,22 @@ foo
 >>> echo $y
 bar baz
 
+NOTE THAT SPECIAL CHARACTERS NEED \ SYMBOL LIKE 
+
+area=`expr $width \* $height`
+
+HOW WOULD YOU KNOW THE EXIT STATUS OF YOUR LAST PROGRAM - $?
+
+>>> cat file
+>>> echo $?
+0 
+
+(because the last program was a success, if it was not, it would be non zero exit value )
+
+```
+
+
+
+```
+
 
