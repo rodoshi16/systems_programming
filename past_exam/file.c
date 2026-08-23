@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include <Kernel.FRAMEWORK/HEADERS/sys/_types/_fd_def.h>
 
 #define max_len 4096
+#include <sys/select.h>
 
 void pass(int *fds, int size){
 
