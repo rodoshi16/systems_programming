@@ -35,7 +35,7 @@ int accept_player(int listen_soc, char *name) {
     
     else {
         char msg[MAX_BUF];
-        sprintf(msg, "Hello player %s! Please wait for your turn to begin.\r\n", name);
+        sprintf(msg, "Hello player %s!\r\n", name);
         //telling os to look up resource with ID 4 and write the bytes there
         write(client_socket, msg, strlen(msg));
 
@@ -65,8 +65,29 @@ void write_to_players(char *msg, int player1, int player2) {
  *   isn't in range, write a message to the socket and repeat.
  */
 int read_a_move(int socket) {
-    // TODO
-    return 1;
+
+    char buf[MAX_BUF]; 
+    read(socket, buf, MAX_BUF); 
+
+    for(int i = 0; i < MAX_BUF; i++){
+
+        if (buf[i] == '\r'){
+            buf[i] = '\0';
+
+            //strtol needs a string - which it is now null      terminated
+            //10 says to interpret the string as a decimal
+            int move = strtol(buf, NULL, 10); 
+
+            if (move >= 1 && move <= 3){
+                return move; 
+            }
+
+            //write 26 bytes from the string to the socket
+            write(socket, "Invalid move\r\n", strlen("Invalid move\r\n")); 
+            return read_a_move(socket); 
+         }  
+    }
+    return 1; 
 }
 
 
@@ -115,36 +136,42 @@ int main() {
 
     char buf[MAX_BUF] = "Basic rules of the game\r\n"; 
     write_to_players(buf, p1, p2); 
-    
 
     int num_pieces = LEGO_PIECES;
     int round = 0;
     while (num_pieces > 0) {
         char msg[MAX_BUF];
         sprintf(msg, "There are %d lego pieces left.\r\n", num_pieces);
-        // TODO: Announce the current status to all players (hint: use write_to_players)
+        write_to_players(msg, p1, p2); 
+
+
 
         // Prompt a player to move by writing a message to them
-        int curr_player = p1; // TODO: set curr_player to the socket descriptor of the current player (hint: round % 2 will alternate between 0 and 1)
+        int curr_player; 
+
+        if (round % 2 == 0){
+            curr_player = p1; 
+        } else{
+            curr_player = p2; 
+        }
         sprintf(msg, "Please enter a move between 1-3.\r\n");
         write(curr_player, msg, strlen(msg));
 
-        int move = p1; // TODO: Read a move from curr_player using read_a_move
+        int move =   read_a_move(curr_player); 
         num_pieces -= move;
         round += 1;
+
 
         // Prompt the player to wait
         if (num_pieces != 0) {
             sprintf(msg, "Thanks! Please wait for the other player to move.\r\n");
             write(curr_player, msg, strlen(msg));
         }
-
-        break; // TODO: remove this break statement after implementing the game loop
     }
 
     char winner_announcement[MAX_BUF];
     sprintf(winner_announcement, "Winner is player %d!\r\n", (round - 1) % 2 + 1);
-    // TODO: write winner_announcement to both players (hint: use write_to_players)
+    write_to_players(winner_announcement, p1, p2);
 
     return 0;
 }
