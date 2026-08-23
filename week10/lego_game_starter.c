@@ -50,10 +50,6 @@ int accept_player(int listen_soc, char *name) {
 void write_to_players(char *msg, int player1, int player2) {
     write(player1, msg, strlen(msg));
     write(player2, msg, strlen(msg));
-
-
-
-    
 }
 
 /* Read and return a valid move from socket.
@@ -67,7 +63,7 @@ void write_to_players(char *msg, int player1, int player2) {
 int read_a_move(int socket) {
 
     char buf[MAX_BUF]; 
-    read(socket, buf, MAX_BUF); 
+    read(socket, buf, MAX_BUF);
 
     for(int i = 0; i < MAX_BUF; i++){
 
@@ -108,7 +104,7 @@ int main() {
 
     printf("Server is listening on %d\n", PORT);
 
-    // This sets an option on the socket so that its port can be reused right
+           // This sets an option on the socket so that its port can be reused right
     // away. Since you are likely to run, stop, edit, compile and rerun your
     // server fairly quickly, this will mean you can reuse the same port.
     int on = 1;
@@ -116,7 +112,7 @@ int main() {
                             (const char *) &on, sizeof(on));
     if (status == -1) {
         perror("setsockopt -- REUSEADDR");
-    }
+    }                                                           
 
     // Bind socket to an address
     if (bind(listen_soc, (struct sockaddr *) &server, sizeof(struct sockaddr_in)) == -1) {
