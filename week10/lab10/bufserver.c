@@ -26,25 +26,31 @@ int main() {
         if (fd < 0) {
             continue;
         }
+    
         char buf[BUFSIZE] = {'\0'};
-        int inbuf = 0;           
-        int room = sizeof(buf);  
-        char *after = buf;      
+        int inbuf = 0;       //how many bytes in the buf    
+        int room = sizeof(buf);  //size of buf
+        char *after = buf;   //where you can start writing in the buf
 
         int nbytes;
         while ((nbytes = read(fd, after, room)) > 0) {
+            //inbuf is now how many bytes you have in the buffer
             inbuf += nbytes; 
             int where;
 
+            //finds the first complete messgae
             while ((where = find_network_newline(buf, inbuf)) > 0) {
 
+                //null terminates that and prints
                 buf[where-2] = '\0'; 
                 printf("Next message: %s\n", buf);
+                //will move the remaining char to the front of the buffer
                 memmove(buf, buf+where, inbuf-where); 
+                //subtract how many are left
                 inbuf -= where; 
 
             }
-            // Step 5: update after and room, in preparation for the next read.
+            // note that we account the size decreasing and after is where you can start overriding so it will override the old characters
             room = sizeof(buf) - inbuf;
             after = buf + inbuf; 
 
