@@ -1,0 +1,134 @@
+# Semaphores
+
+## What is a Semaphore?
+
+A semaphore is a synchronization primitive that maintains a **counter**.
+
+Think of it as a collection of permits.
+
+```text
+Semaphore = 3
+
+Permit 1
+Permit 2
+Permit 3
+```
+
+Three threads can acquire a permit.
+
+A fourth thread must wait.
+
+## Basic Operations
+
+### Wait / Acquire
+
+Decrements the semaphore.
+
+```text
+3 → 2 → 1 → 0
+```
+
+If the value is already zero, the thread blocks.
+
+### Post / Release
+
+Increments the semaphore.
+
+```text
+0 → 1
+```
+
+A waiting thread can now continue.
+
+## POSIX API
+
+```c
+sem_init()
+sem_wait()
+sem_post()
+sem_destroy()
+```
+
+Example:
+
+```c
+sem_wait(&sem);
+
+/* access resource */
+
+sem_post(&sem);
+```
+
+## Mutex vs Semaphore
+
+A mutex generally represents:
+
+```text
+ONE owner
+```
+
+A semaphore can represent:
+
+```text
+N available resources
+```
+
+For example, if you have five database connections:
+
+```text
+Semaphore = 5
+```
+
+Only five threads can use a connection simultaneously.
+
+## Counting Semaphore
+
+A counting semaphore can have values greater than one.
+
+```text
+Semaphore = 4
+
+Thread A → acquire
+Thread B → acquire
+Thread C → acquire
+Thread D → acquire
+
+Thread E → waits
+```
+
+## Binary Semaphore
+
+A binary semaphore has two states:
+
+```text
+0 = unavailable
+1 = available
+```
+
+It can resemble mutex behavior, but mutexes and binary semaphores have different ownership semantics and use cases.
+
+## Common Uses
+
+* Resource pools
+* Limiting concurrency
+* Producer/consumer systems
+* Thread coordination
+
+## Practice
+
+Create a program with:
+
+```text
+10 threads
+Semaphore = 3
+```
+
+Verify that no more than three threads enter the protected resource at once.
+
+## Interview Questions
+
+* What is a semaphore?
+* Mutex vs semaphore?
+* Counting vs binary semaphore?
+* What happens when `sem_wait()` reaches zero?
+* What does `sem_post()` do?
