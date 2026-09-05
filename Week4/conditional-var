@@ -1,0 +1,130 @@
+# Condition Variables
+
+## What is a Condition Variable?
+
+A condition variable allows a thread to **sleep until some condition becomes true**.
+
+Instead of constantly checking:
+
+```c
+while (queue_empty()) {
+    // keep checking
+}
+```
+
+a thread can sleep:
+
+```text
+Thread
+  ↓
+Condition is false
+  ↓
+WAIT
+  ↓
+Another thread changes state
+  ↓
+SIGNAL
+  ↓
+Thread wakes up
+  ↓
+Check condition again
+```
+
+## Why Do We Need Them?
+
+Suppose a consumer needs an item from a queue.
+
+If the queue is empty, there is nothing useful for the consumer to do.
+
+A condition variable lets it sleep until a producer adds something.
+
+```text
+Producer
+   │
+   ▼
+ Queue
+   │
+   ▼
+Consumer
+```
+
+## POSIX API
+
+```c
+pthread_cond_init()
+pthread_cond_wait()
+pthread_cond_signal()
+pthread_cond_broadcast()
+pthread_cond_destroy()
+```
+
+## Basic Pattern
+
+```c
+pthread_mutex_lock(&mutex);
+
+while (!condition) {
+    pthread_cond_wait(&cond, &mutex);
+}
+
+pthread_mutex_unlock(&mutex);
+```
+
+The condition variable is normally paired with a mutex.
+
+## Why `while` Instead of `if`?
+
+Always re-check the condition:
+
+```c
+while (!condition) {
+    pthread_cond_wait(&cond, &mutex);
+}
+```
+
+A thread can wake up even though the condition is no longer true.
+
+Therefore:
+
+```text
+Wake up
+   ↓
+Acquire mutex
+   ↓
+Check condition
+   ↓
+Still false? → sleep again
+```
+
+## Signal vs Broadcast
+
+### `pthread_cond_signal()`
+
+Wakes one waiting thread.
+
+### `pthread_cond_broadcast()`
+
+Wakes all waiting threads.
+
+## Mental Model
+
+A mutex protects the shared state.
+
+A condition variable tells threads:
+
+> "You can sleep until something changes."
+
+## Practice
+
+Implement a program where:
+
+* One thread produces numbers.
+* Another thread consumes them.
+* The consumer waits when there is no number available.
+
+## Interview Questions
+
+* Why must condition variables usually be used with a mutex?
+* Why do we use `while` instead of `if`?
+* What is the difference between `signal` and `broadcast`?
+* What happens when a thread calls `pthread_cond_wait()`?
