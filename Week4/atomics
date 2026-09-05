@@ -1,0 +1,124 @@
+# Atomics
+
+## What is an Atomic Operation?
+
+An atomic operation happens as one indivisible operation from the perspective of other threads.
+
+C provides atomics through:
+
+```c
+#include <stdatomic.h>
+```
+
+Example:
+
+```c
+atomic_int counter = 0;
+
+atomic_fetch_add(&counter, 1);
+```
+
+## The Problem With `counter++`
+
+This:
+
+```c
+counter++;
+```
+
+is conceptually:
+
+```text
+READ
+ ↓
+ADD
+ ↓
+WRITE
+```
+
+Another thread can interfere between these operations.
+
+An atomic increment provides the required atomicity.
+
+## Common Atomic Types
+
+```c
+atomic_int
+atomic_bool
+atomic_uint
+atomic_long
+```
+
+You can also use:
+
+```c
+_Atomic int
+```
+
+## Common Operations
+
+```c
+atomic_load()
+atomic_store()
+atomic_exchange()
+atomic_fetch_add()
+atomic_fetch_sub()
+```
+
+## Atomic Does NOT Mean Thread-Safe
+
+Consider a complex data structure:
+
+```text
+Atomic size
++
+Normal array
++
+Normal pointers
+```
+
+Making only `size` atomic does not automatically make the entire data structure safe.
+
+You must reason about the entire data structure and its invariants.
+
+## Atomics vs Mutexes
+
+Use a mutex when you need to protect a larger critical section.
+
+Use atomics when the synchronization problem can be correctly expressed through atomic operations.
+
+## Example: Atomic Flag
+
+```c
+atomic_bool ready = false;
+
+/* Thread A */
+atomic_store(&ready, true);
+
+/* Thread B */
+if (atomic_load(&ready)) {
+    /* continue */
+}
+```
+
+This introduces another important topic:
+
+**memory ordering.**
+
+## Practice
+
+Implement a shared counter using:
+
+1. Normal integer
+2. Mutex
+3. Atomic integer
+
+Benchmark the three versions.
+
+## Interview Questions
+
+* What makes an operation atomic?
+* Atomic vs mutex?
+* Is an atomic variable automatically sufficient to make a data structure thread-safe?
+* What is CAS?
+* What is memory ordering?
