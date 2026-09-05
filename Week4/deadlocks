@@ -1,0 +1,119 @@
+# Deadlocks
+
+## What is a Deadlock?
+
+A deadlock occurs when threads are permanently waiting for resources held by one another.
+
+Example:
+
+```text
+Thread A                Thread B
+
+LOCK A                  LOCK B
+   ↓                       ↓
+WAIT for B              WAIT for A
+```
+
+Neither thread can continue.
+
+## Four Conditions
+
+A deadlock requires four conditions:
+
+### 1. Mutual Exclusion
+
+A resource can only be held by one thread at a time.
+
+### 2. Hold and Wait
+
+A thread holds one resource while waiting for another.
+
+### 3. No Preemption
+
+A resource cannot simply be taken away from the thread holding it.
+
+### 4. Circular Wait
+
+There is a cycle:
+
+```text
+A waits for B
+B waits for C
+C waits for A
+```
+
+## Preventing Deadlocks
+
+### Lock Ordering
+
+Always acquire locks in the same order.
+
+```text
+LOCK A
+LOCK B
+```
+
+Never:
+
+```text
+Thread 1:
+A → B
+
+Thread 2:
+B → A
+```
+
+## Deadlock vs Race Condition
+
+Race condition:
+
+```text
+Program result depends on timing.
+```
+
+Deadlock:
+
+```text
+Threads become permanently stuck.
+```
+
+## Deadlock vs Starvation
+
+Deadlock:
+
+```text
+Nobody progresses.
+```
+
+Starvation:
+
+```text
+One thread repeatedly fails to make progress.
+```
+
+## Deadlock vs Livelock
+
+Deadlock:
+
+```text
+Threads are blocked.
+```
+
+Livelock:
+
+```text
+Threads keep running but accomplish nothing.
+```
+
+## Practice
+
+Write a program that intentionally deadlocks two threads.
+
+Then fix it using a consistent lock ordering.
+
+## Interview Questions
+
+* What are the four necessary conditions for deadlock?
+* How can lock ordering prevent deadlocks?
+* Deadlock vs starvation?
+* Deadlock vs livelock?
