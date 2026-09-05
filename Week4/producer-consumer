@@ -1,0 +1,141 @@
+# Producer / Consumer
+
+## The Problem
+
+The producer/consumer pattern has:
+
+```text
+Producer → Queue → Consumer
+```
+
+The producer creates work.
+
+The consumer processes work.
+
+## Example
+
+```text
+Producer
+   │
+   ▼
+┌───────────────┐
+│ Work Queue    │
+│ A B C D       │
+└───────────────┘
+   │
+   ▼
+Consumer
+```
+
+## Bounded Queue
+
+Suppose the queue has capacity `4`.
+
+```text
+[A][B][C][D]
+```
+
+The producer cannot add another item until space becomes available.
+
+Similarly, the consumer cannot remove an item when the queue is empty.
+
+Therefore there are two conditions:
+
+```text
+not_empty
+not_full
+```
+
+## Synchronization
+
+A typical implementation uses:
+
+```text
+Mutex
++
+Condition Variables
++
+Queue
+```
+
+The mutex protects the queue.
+
+One condition variable handles:
+
+```text
+not_empty
+```
+
+Another handles:
+
+```text
+not_full
+```
+
+## Producer
+
+Conceptually:
+
+```text
+LOCK
+
+while queue is full:
+    WAIT
+
+add item
+
+SIGNAL not_empty
+
+UNLOCK
+```
+
+## Consumer
+
+```text
+LOCK
+
+while queue is empty:
+    WAIT
+
+remove item
+
+SIGNAL not_full
+
+UNLOCK
+```
+
+## Why This Pattern Matters
+
+Producer/consumer appears everywhere:
+
+* Job queues
+* Operating systems
+* Networking
+* Logging systems
+* Message processing
+* Web servers
+* Thread pools
+
+## Practice
+
+Implement a bounded queue in C using:
+
+```c
+pthread_mutex_t
+pthread_cond_t
+```
+
+Then test:
+
+```text
+1 producer / 1 consumer
+2 producers / 2 consumers
+4 producers / 4 consumers
+```
+
+## Interview Questions
+
+* Why does the consumer wait when the queue is empty?
+* Why does the producer wait when the queue is full?
+* Why are two condition variables useful?
+* Where should the mutex be locked?
