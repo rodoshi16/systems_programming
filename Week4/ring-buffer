@@ -1,0 +1,127 @@
+# Ring Buffers
+
+## What is a Ring Buffer?
+
+A ring buffer is a fixed-size circular data structure.
+
+```text
+        ┌─────────────────────┐
+        ↓                     │
+[A][B][C][ ][ ][ ][ ][ ] ←────┘
+```
+
+When the end is reached, the index wraps around.
+
+```text
+0 → 1 → 2 → 3 → 4 → 5 → 0
+```
+
+## Why Use a Ring Buffer?
+
+A ring buffer:
+
+* Uses fixed memory
+* Avoids repeated allocation
+* Has predictable memory usage
+* Can provide very low overhead
+* Works well for producer/consumer systems
+
+## Core Components
+
+Typically:
+
+```text
+buffer
+head
+tail
+capacity
+```
+
+### Head
+
+Points to where the producer will write.
+
+### Tail
+
+Points to where the consumer will read.
+
+## Example
+
+```text
+Capacity = 5
+
+[ A ][ B ][ C ][   ][   ]
+  ↑               ↑
+ tail            head
+```
+
+After consuming A:
+
+```text
+[   ][ B ][ C ][   ][   ]
+      ↑
+     tail
+```
+
+## Wraparound
+
+Instead of moving beyond the end:
+
+```c
+index = (index + 1) % capacity;
+```
+
+The index wraps back to zero.
+
+## Concurrency
+
+There are different designs:
+
+```text
+SPSC
+Single Producer / Single Consumer
+
+MPSC
+Multiple Producers / Single Consumer
+
+MPMC
+Multiple Producers / Multiple Consumers
+```
+
+SPSC is usually the simplest place to start.
+
+## Lock-Free Ring Buffers
+
+A more advanced implementation can use:
+
+```text
+Atomic head
++
+Atomic tail
++
+Memory ordering
+```
+
+Some high-performance implementations also use sequence numbers to determine whether individual slots are ready.
+
+## Practice
+
+Implement these versions:
+
+1. Single-threaded ring buffer
+2. Mutex-protected ring buffer
+3. SPSC atomic ring buffer
+
+Benchmark:
+
+* Throughput
+* Latency
+* Memory allocations
+
+## Interview Questions
+
+* Why use a ring buffer?
+* Ring buffer vs linked list?
+* How do head and tail work?
+* How do you detect full vs empty?
+* What makes an SPSC ring buffer easier than MPMC?
