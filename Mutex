@@ -1,0 +1,419 @@
+# Mutexes
+
+## What is a Mutex?
+
+A mutex (mutual exclusion) is a synchronization mechanism that allows **only one thread at a time** to access a protected section of code.
+
+Think of it like a single key:
+
+```text
+             🔑 Mutex
+                │
+        ┌───────┴───────┐
+        ↓               ↓
+    Thread A         Thread B
+    gets lock        waits
+        │
+        ↓
+  Critical Section
+        │
+        ↓
+   unlocks mutex
+                        │
+                        ↓
+                  Thread B gets lock
+```
+
+---
+
+## Why Do We Need Mutexes?
+
+Consider:
+
+```c
+int counter = 0;
+```
+
+Two threads execute:
+
+```c
+counter++;
+```
+
+Conceptually, `counter++` involves:
+
+```text
+READ counter
+     ↓
+ADD 1
+     ↓
+WRITE counter
+```
+
+The operations can interleave:
+
+```text
+Thread A          Thread B
+
+READ 0
+                  READ 0
+ADD 1
+                  ADD 1
+WRITE 1
+                  WRITE 1
+```
+
+The final result is:
+
+```text
+1
+```
+
+instead of:
+
+```text
+2
+```
+
+This is a **race condition**.
+
+---
+
+## Mutex Solution
+
+Protect the critical section:
+
+```c
+pthread_mutex_lock(&mutex);
+
+counter++;
+
+pthread_mutex_unlock(&mutex);
+```
+
+Now:
+
+```text
+Thread A
+   ↓
+LOCK
+   ↓
+counter++
+   ↓
+UNLOCK
+   ↓
+Thread B
+   ↓
+LOCK
+   ↓
+counter++
+   ↓
+UNLOCK
+```
+
+The threads cannot simultaneously execute the protected section.
+
+---
+
+## Basic C Example
+
+```c
+#include <pthread.h>
+#include <stdio.h>
+
+int counter = 0;
+
+pthread_mutex_t mutex;
+
+void *increment(void *arg) {
+    for (int i = 0; i < 100000; i++) {
+
+        pthread_mutex_lock(&mutex);
+
+        counter++;
+
+        pthread_mutex_unlock(&mutex);
+    }
+
+    return NULL;
+}
+
+int main() {
+    pthread_t t1, t2;
+
+    pthread_mutex_init(&mutex, NULL);
+
+    pthread_create(&t1, NULL, increment, NULL);
+    pthread_create(&t2, NULL, increment, NULL);
+
+    pthread_join(t1, NULL);
+    pthread_join(t2, NULL);
+
+    printf("counter = %d\n", counter);
+
+    pthread_mutex_destroy(&mutex);
+
+    return 0;
+}
+```
+
+Compile:
+
+```bash
+gcc counter.c -o counter -pthread
+```
+
+---
+
+## Important Rule
+
+A mutex protects **shared state**.
+
+Ask:
+
+```text
+Is this data shared?
+        ↓
+Can multiple threads access it?
+        ↓
+Can at least one thread modify it?
+        ↓
+Do I need synchronization?
+```
+
+---
+
+## Critical Section
+
+The code between:
+
+```c
+pthread_mutex_lock(&mutex);
+```
+
+and:
+
+```c
+pthread_mutex_unlock(&mutex);
+```
+
+is the protected region.
+
+Keep the critical section as small as reasonably possible.
+
+Bad:
+
+```c
+pthread_mutex_lock(&mutex);
+
+do_expensive_computation();
+read_file();
+make_network_request();
+counter++;
+
+pthread_mutex_unlock(&mutex);
+```
+
+Better:
+
+```c
+do_expensive_computation();
+read_file();
+make_network_request();
+
+pthread_mutex_lock(&mutex);
+counter++;
+pthread_mutex_unlock(&mutex);
+```
+
+---
+
+## Mutex Lifecycle
+
+A mutex generally follows:
+
+```text
+Initialize
+    ↓
+Lock
+    ↓
+Access shared state
+    ↓
+Unlock
+    ↓
+Destroy
+```
+
+C API:
+
+```c
+pthread_mutex_init()
+pthread_mutex_lock()
+pthread_mutex_unlock()
+pthread_mutex_destroy()
+```
+
+---
+
+## Common Mistakes
+
+### Forgetting to unlock
+
+```c
+pthread_mutex_lock(&mutex);
+
+counter++;
+
+// forgot unlock
+```
+
+Other threads may wait forever.
+
+---
+
+### Unlocking the wrong mutex
+
+```c
+pthread_mutex_lock(&mutexA);
+
+counter++;
+
+pthread_mutex_unlock(&mutexB);
+```
+
+This is incorrect.
+
+---
+
+### Holding a mutex too long
+
+```c
+pthread_mutex_lock(&mutex);
+
+sleep(10);
+
+pthread_mutex_unlock(&mutex);
+```
+
+Other threads unnecessarily wait.
+
+---
+
+### Accessing shared state outside the mutex
+
+```c
+pthread_mutex_lock(&mutex);
+counter++;
+pthread_mutex_unlock(&mutex);
+
+printf("%d", counter);
+```
+
+Whether this is safe depends on what other threads are doing with `counter`. The important point is to reason about **every access**, not just writes.
+
+---
+
+# Mutex vs Atomic
+
+A mutex:
+
+```text
+LOCK
+ ↓
+multiple operations
+ ↓
+UNLOCK
+```
+
+An atomic:
+
+```text
+ONE atomic operation
+```
+
+For example:
+
+```c
+counter++;
+```
+
+can potentially be replaced with an atomic increment.
+
+But atomics are not simply "faster mutexes."
+
+Use the synchronization mechanism that matches the problem.
+
+---
+
+# Exercises
+
+### Exercise 1
+
+Create two threads.
+
+Each thread increments a shared counter 1,000,000 times.
+
+Run it:
+
+1. Without a mutex
+2. With a mutex
+
+Compare the results.
+
+---
+
+### Exercise 2
+
+Create a shared bank account.
+
+```text
+balance = 1000
+```
+
+Create multiple threads performing deposits and withdrawals.
+
+Make the account thread-safe.
+
+---
+
+### Exercise 3
+
+Create a thread-safe linked list.
+
+Support:
+
+```text
+insert()
+remove()
+find()
+```
+
+Protect the list with a mutex.
+
+---
+
+## Questions I Should Be Able to Answer
+
+* What problem does a mutex solve?
+* What is a critical section?
+* Why can `counter++` cause a race?
+* What happens when a thread tries to lock an already-locked mutex?
+* Why should you unlock a mutex?
+* Why should critical sections be small?
+* What is lock contention?
+* Mutex vs atomic?
+* What happens if you forget to unlock?
+* How can mutexes contribute to deadlock?
+
+## Mental Model
+
+Don't memorize:
+
+```c
+pthread_mutex_lock()
+pthread_mutex_unlock()
+```
+
+Understand:
+
+> **A mutex gives one thread exclusive access to shared mutable state so that the operations on that state cannot interfere with each other.**
