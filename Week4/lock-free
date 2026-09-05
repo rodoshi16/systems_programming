@@ -1,0 +1,114 @@
+# Lock-Free Programming
+
+## What is Lock-Free Programming?
+
+Lock-free algorithms allow multiple threads to operate on shared data without relying on traditional blocking mutexes.
+
+A common technique is CAS.
+
+```text
+READ
+ ↓
+MODIFY
+ ↓
+CAS
+ ↓
+Success?
+ ├── YES → Done
+ └── NO  → Retry
+```
+
+## Why Use Lock-Free Algorithms?
+
+Potential benefits include:
+
+* Avoiding blocking
+* Reducing lock contention
+* High throughput
+* Predictable progress properties
+
+They are especially interesting in high-performance concurrent systems.
+
+## Lock-Free Does Not Mean "No Synchronization"
+
+Lock-free algorithms still use synchronization.
+
+They commonly rely on:
+
+```text
+Atomics
++
+CAS
++
+Memory ordering
+```
+
+## Progress Guarantees
+
+### Obstruction-Free
+
+A thread can make progress if it eventually runs without interference.
+
+### Lock-Free
+
+The system as a whole always makes progress.
+
+At least one operation completes within a finite number of steps.
+
+### Wait-Free
+
+Every operation completes within a bounded number of steps.
+
+```text
+Obstruction-free
+      ↓
+Lock-free
+      ↓
+Wait-free
+```
+
+These guarantees should not be confused.
+
+## Difficult Problems
+
+Lock-free programming requires understanding:
+
+* CAS
+* ABA
+* Memory ordering
+* Memory reclamation
+* Cache coherence
+* Object lifetime
+
+## Common Mistake
+
+Do not assume:
+
+```text
+lock-free = automatically faster
+```
+
+A lock-free algorithm can be slower because of:
+
+* CAS retries
+* Cache contention
+* Memory allocation
+* Poor memory ordering
+* Complex memory reclamation
+
+## Practice
+
+Implement:
+
+1. Mutex-protected stack
+2. CAS-based stack
+
+Benchmark both under contention.
+
+## Interview Questions
+
+* What does lock-free mean?
+* Lock-free vs wait-free?
+* Why can CAS loops retry?
+* What is ABA?
+* Why can lock-free code still be slow?
