@@ -1,0 +1,103 @@
+# False Sharing
+
+## What is False Sharing?
+
+False sharing occurs when two independent variables used by different threads happen to occupy the same cache line.
+
+Example:
+
+```text
+Cache Line
+
+┌──────────────────────────────┐
+│ counterA │ counterB          │
+└──────────────────────────────┘
+```
+
+Thread A modifies:
+
+```text
+counterA
+```
+
+Thread B modifies:
+
+```text
+counterB
+```
+
+The variables are independent, but the cache line is shared.
+
+## Why Is It Slow?
+
+When one core modifies its variable, the cache line may need to be invalidated or transferred between cores.
+
+Repeated writes create cache-coherence traffic.
+
+```text
+Core 1 → modify A
+          ↓
+       cache line
+          ↓
+Core 2 → modify B
+          ↓
+       cache line
+```
+
+The cores repeatedly interfere with each other.
+
+## Fix
+
+Separate frequently modified variables into different cache lines.
+
+In C++:
+
+```cpp
+struct alignas(64) Counter {
+    std::atomic<int> value;
+};
+```
+
+Another option is explicit padding.
+
+## Important
+
+Do not automatically add padding everywhere.
+
+First:
+
+```text
+Measure
+ ↓
+Identify bottleneck
+ ↓
+Confirm false sharing
+ ↓
+Fix
+ ↓
+Benchmark again
+```
+
+## Practice
+
+Create:
+
+```text
+Version 1:
+counterA and counterB adjacent
+
+Version 2:
+counterA and counterB separated
+```
+
+Have two threads repeatedly increment them.
+
+Benchmark both versions.
+
+## Interview Questions
+
+* What is false sharing?
+* Why can independent variables interfere?
+* What is a cache line?
+* What does `alignas(64)` do?
+* Why shouldn't you blindly add padding?
